@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Beans to add to the current Application context definition -->
+  
+<beans>
+	
+    <bean id="soundexUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    	<property name="order"><value>2</value></property>
+    	<property name="mappings">
+            <props>
+	           <prop key="module/@MODULE_ID@/soundex.form">soundexFormController</prop>
+	    	</props>
+		</property>
+    </bean>
+    
+	<!-- ========================= Controllers ========================= -->
+	
+    <!-- Controllers -->
+    <bean id="soundexFormController" class="@MODULE_PACKAGE@.web.controller.SoundexFormController">
+		<property name="commandName"><value>growthEncounter</value></property>
+		<property name="formView"><value>/module/@MODULE_ID@/growthChartForm</value></property>
+		<property name="successView"><value>growthChart.htm</value></property>
+		<property name="validator"><ref bean="soundexValidator" /></property>
+    </bean>
+    
+   <bean id="soundexValidator" class="org.openmrs.module.soundex.validator.SoundexValidator" />
+     
+ </beans>
