@@ -9,7 +9,7 @@
     	<property name="order"><value>2</value></property>
     	<property name="mappings">
             <props>
-	           <prop key="module/@MODULE_ID@/soundex.form">soundexFormController</prop>
+	           <prop key="module/soundex/soundex.form">soundexFormController</prop>
 	    	</props>
 		</property>
     </bean>
@@ -17,9 +17,9 @@
 	<!-- ========================= Controllers ========================= -->
 	
     <!-- Controllers -->
-    <bean id="soundexFormController" class="@MODULE_PACKAGE@.web.controller.SoundexFormController">
+    <bean id="soundexFormController" class="org.openmrs.module.soundex.web.controller.SoundexFormController">
 		<property name="commandName"><value>growthEncounter</value></property>
-		<property name="formView"><value>/module/@MODULE_ID@/growthChartForm</value></property>
+		<property name="formView"><value>/module/soundex/growthChartForm</value></property>
 		<property name="successView"><value>growthChart.htm</value></property>
 		<property name="validator"><ref bean="soundexValidator" /></property>
     </bean>
