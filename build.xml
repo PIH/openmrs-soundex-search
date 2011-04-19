@@ -6,7 +6,9 @@
 <!-- ** @version 1.0                                        ** -->
 <!-- ********************************************************* -->
 <project name="Module" default="package-module">
-		
+
+    <property name="openmrs.data.dir"   location="${user.home}/.OpenMRS"/>
+
 	<!-- *********************************************************** -->
 	<!-- **                     TARGETS                           ** -->
 	<!-- *********************************************************** -->
@@ -122,5 +124,9 @@
 		</jar>
 	</target>
 
-</project>
+	<target name="deploy-omod-locally" depends="package-module" description="Deploys omod to local tomcat instance">
+        <copy todir="${openmrs.data.dir}/modules" file="dist/${module.id}-${module.version}.omod"/>
+	</target>
+
+ </project>
 

@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +31,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PersonName;
 import org.openmrs.User;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
@@ -57,6 +59,8 @@ public class SoundexFormController extends SimpleFormController {
 	
 	/** Logger for this class and subclasses */
 	protected final Log log = LogFactory.getLog(getClass());
+
+  User user;
 	
 	/**
 	 * This class returns the form backing object. This can be a string, a boolean, or a normal java
@@ -67,84 +71,8 @@ public class SoundexFormController extends SimpleFormController {
 	 */
 	@Override
 	protected Object formBackingObject(HttpServletRequest request) throws Exception {
-		
-		Patient patient = null;
-		if (Context.isAuthenticated()) {
-			String patientId = request.getParameter("patientId");
-			if (patientId == null)
-				patientId = request.getParameter("patientId");
-			log.info("patientId: " + patientId);
-			if (patientId == null)
-				throw new Exception("Integer 'patientId' is a required parameter");
-			
-			PatientService ps = Context.getPatientService();
-			Integer id = null;
-			
-			try {
-				id = Integer.valueOf(patientId);
-				patient = ps.getPatient(id);
-			}
-			catch (NumberFormatException numberError) {
-				log.warn("Invalid patientId supplied: '" + patientId + "'", numberError);
-			}
-			catch (org.springframework.orm.ObjectRetrievalFailureException noPatientEx) {
-				log.warn("There is no patient with id: '" + patientId + "'", noPatientEx);
-			}
-			
-			if (patient == null)
-				throw new Exception("There is no patient with id: '" + patientId + "'");
-		} else {
-			patient = new Patient();
-		}
-		
-		Concept weightConcept = Context.getConceptService().getConceptByIdOrName(
-		    Context.getAdministrationService().getGlobalProperty("concept.weight"));
-		Concept heightConcept = Context.getConceptService().getConceptByIdOrName(
-		    Context.getAdministrationService().getGlobalProperty("concept.height"));
-		
-		// Create new Encounter Command Object
-		Encounter growthEncounter;
-		
-		String sObsId = request.getParameter("obsId");
-		Integer obsId = null;
-		
-		if (sObsId != null) {
-			obsId = Integer.valueOf(sObsId);
-		}
-		
-		if (obsId != null) { // Editing Encounter
-			EncounterService encounterService = Context.getEncounterService();
-			ObsService obsService = Context.getObsService();
-			
-			Obs obs = obsService.getObs(obsId);
-			growthEncounter = obs.getEncounter();
-			
-		} else { // New Encounter
-			EncounterType clinicianEntered = new EncounterType(Integer.parseInt(Context.getAdministrationService()
-			        .getGlobalProperty("growthchart.encountertype.clinician")));
-			List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
-			encounterTypes.add(clinicianEntered);
-			
-			growthEncounter = new Encounter();
-			growthEncounter.setEncounterType(clinicianEntered);
-			growthEncounter.setPatient(patient);
-			growthEncounter.setEncounterDatetime(new Date());
-			
-			// Get Obs for Encounter
-			Obs weightObs = new Obs();
-			weightObs.setPerson(patient);
-			weightObs.setConcept(weightConcept);
-			
-			Obs heightObs = new Obs();
-			heightObs.setPerson(patient);
-			heightObs.setConcept(heightConcept);
-			
-			// add observations
-			growthEncounter.addObs(weightObs);
-			growthEncounter.addObs(heightObs);
-		}
-		
-		return growthEncounter;
+    user = Context.getAuthenticatedUser();
+    return user;
 	}
 	
 	/**
@@ -157,44 +85,16 @@ public class SoundexFormController extends SimpleFormController {
 	protected Map<String, Object> referenceData(HttpServletRequest request, Object obj, Errors err) throws Exception {
 		
 		Map<String, Object> model = new HashMap<String, Object>();
-		
-		// Get Encounter Command Object from Form Backing
-		Encounter growthEncounter = (Encounter) obj;
-		Patient patient = growthEncounter.getPatient();
-		String sObsId = request.getParameter("obsId");
-		
-		Concept weightConcept = Context.getConceptService().getConceptByIdOrName(
-		    Context.getAdministrationService().getGlobalProperty("concept.weight"));
-		Concept heightConcept = Context.getConceptService().getConceptByIdOrName(
-		    Context.getAdministrationService().getGlobalProperty("concept.height"));
-		
-		// Add data needed for form
-		if (sObsId != null && !sObsId.equals("")) {
-			for (Obs o : growthEncounter.getAllObs()) {
-				if (o.getConcept().equals(heightConcept)) {
-					model.put("heightValue", o.getValueNumeric());
-				} else if (o.getConcept().equals(weightConcept)) {
-					model.put("weightValue", o.getValueNumeric());
-				}
-			}
-		}
-		
-		String heightValue = request.getParameter("heightValue");
-		String weightValue = request.getParameter("weightValue");
-		
-		// if validation fails and the form is shown again, bind the values of the height and weight fields
-		if (heightValue != null && !heightValue.equals("")) {
-			model.put("heightValue", heightValue);
-			log.info("height inserted");
-		}
-		if (weightValue != null && !weightValue.equals("")) {
-			model.put("weightValue", weightValue);
-			log.info("weight inserted");
-		}
-		
-		model.put("obsId", sObsId);
-		model.put("patient", patient);
-		
+
+    User user = (User)obj;
+    final Set<PersonName> names = user.getNames();
+    final Integer age = user.getAge();
+    final PersonName name = names.iterator().next();
+
+    model.put("firstname", name.getGivenName());
+    model.put("lastname", name.getFamilyName());
+    model.put("age", age);
+    
 		return model;
 	}
 	
@@ -214,39 +114,8 @@ public class SoundexFormController extends SimpleFormController {
 	
 	@Override
 	protected void onBind(HttpServletRequest request, Object obj, BindException errors) {
-		
-		Concept weightConcept = Context.getConceptService().getConceptByIdOrName(
-		    Context.getAdministrationService().getGlobalProperty("concept.weight"));
-		Concept heightConcept = Context.getConceptService().getConceptByIdOrName(
-		    Context.getAdministrationService().getGlobalProperty("concept.height"));
-		
-		Encounter growthEncounter = (Encounter) obj;
-		
-		String heightValue = request.getParameter("heightValue");
-		String weightValue = request.getParameter("weightValue");
-		
-		// Validate and Bind Obs to Command
-		for (Obs o : growthEncounter.getAllObs()) {
-			if (o.getConcept().equals(heightConcept)) {
-				
-				if (StringUtils.hasText(heightValue)) {
-					o.setValueNumeric(Double.valueOf(heightValue));
-				}
-				
-			} else if (o.getConcept().equals(weightConcept)) {
-				
-				if (StringUtils.hasText(heightValue)) {
-					o.setValueNumeric(Double.valueOf(weightValue));
-				}
-			}
-			Location location = growthEncounter.getLocation();
-			Date date = growthEncounter.getEncounterDatetime();
-			
-			o.setLocation(location);
-			o.setObsDatetime(date);
-			
-			growthEncounter.addObs(o);
-		}
+    String s = (String)obj;
+
 	}
 	
 	/**
@@ -257,14 +126,20 @@ public class SoundexFormController extends SimpleFormController {
 	@Override
 	protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object object,
 	                                BindException exceptions) throws Exception {
-		
-		Encounter growthEncounter = (Encounter) object;
-		Integer patientId = growthEncounter.getPatientId();
-		
-		// save the encounter
-		EncounterService encounterService = Context.getEncounterService();
-		encounterService.saveEncounter(growthEncounter);
-		
-		return new ModelAndView(new RedirectView(getSuccessView() + "?patientId=" + patientId));
-	}
+
+
+    final ModelAndView modelAndView = new ModelAndView(getSuccessView());
+    modelAndView.addObject("user", object);
+    return modelAndView;
+  }
+
+
+//  @Override
+//  public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+//    final ModelAndView modelAndView = new ModelAndView(getSuccessView());
+//
+//    modelAndView.addObject("user", Context.getAuthenticatedUser());
+//    return modelAndView;
+//
+//  }
 }

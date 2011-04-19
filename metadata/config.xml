@@ -8,7 +8,7 @@
 	<name>PIH Malawi Soundex Module</name>
 	<version>1.0</version>
 	<package>org.openmrs.module.@MODULE_ID@</package>
-	<author>innoQ</author>
+	<author>Arnd Kleinbeck, innoQ Deutschland GmbH</author>
 	<description>
 			Integration of PIH Malawi Soundex name search.
 	</description>
@@ -16,7 +16,12 @@
 	<activator>@MODULE_PACKAGE@.SoundexActivator</activator>
 	
 	<require_version>1.2.0.3400</require_version>
-	
+
+    <advice>
+	    <point>org.openmrs.api.PatientService</point>
+	    <class>org.openmrs.module.soundex.advisor.PatientServiceAroundAdvisor</class>
+    </advice>
+
 	<!-- Extensions -->
 	<!-- 
 	<extension>
