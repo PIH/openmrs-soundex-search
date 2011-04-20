@@ -98,4 +98,4 @@ transport=dt_socket,address=127.0.0.1
 /Users/akl/dev/openmrs/openmrs-1.5.2/lib/mail/activation.jar
 /Users/akl/dev/openmrs/openmrs-1.5.2/lib/mail/mail.jar
 /Users/akl/dev/openmrs/openmrs-1.5.2/lib/jta/jta.jar
-/Users/akl/dev/openmrs/openmrs-1.5.2/lib/commons-digester/commons-digester.jar com.intellij.rt.execution.junit.JUnitStarter -ideVersion5 -junit4 org.openmrs.module.soundex.encoder.SoundexEncoderTest
+/Users/akl/dev/openmrs/openmrs-1.5.2/lib/commons-digester/commons-digester.jar com.intellij.rt.execution.junit.JUnitStarter -ideVersion5 -junit4 org.openmrs.module.soundex.encoder.SoundexEncoderDBTest

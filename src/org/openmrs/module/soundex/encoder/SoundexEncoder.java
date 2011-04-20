@@ -2,75 +2,87 @@
   */
 package org.openmrs.module.soundex.encoder;
 
+import org.apache.commons.codec.EncoderException;
+import org.apache.commons.codec.StringEncoder;
+
 /**
  *
  */
-public class SoundexEncoder {
+public class SoundexEncoder implements StringEncoder {
 
-  public static String encode(String name) {
+  public String encode(String str) throws EncoderException {
 
-    String word = name;
-
-    if (word.isEmpty()) {
+    if (str == null || str.equals(""))
       return null;
-    }
 
-    // Capitalize all letters in the word
-    word = word.toUpperCase();
+    // Handle blanks
+    str = str.toUpperCase();
 
-    // Drop all punctuation marks and numbers and spaces
-    word = word.replaceAll("/[^A-Z]/", "");
-    
-    if (word.isEmpty()) {
+    //  Drop all punctuation marks and numbers and spaces
+    str = str.replaceAll("[^A-Z]", "");
+
+    if (str == null || str.equals(""))
       return null;
-    }
 
     // Words starting with M or N or D followed by another consonant should drop the first letter
-    word = word.replaceFirst("/^M([BDFGJKLMNPQRSTVXZ])/",  "\1");
-    word = word.replaceFirst("/^N([BCDFGJKLMNPQRSTVXZ])/", "\1");
-    word = word.replaceFirst("/^D([BCDFGJKLMNPQRSTVXZ])/", "\1");
-/*
-    # THY and CH as common phonemes enhancement
-    word.gsub!(/(THY|CH|TCH)/, '9')
-    # Retain the first letter of the word
-    initial = word.slice(0..0)
-    tail = word.slice(1..word.size)
-    # Initial vowel enhancement
-    initial.gsub!(/[AEI]/, 'E')
-    # Initial C/K enhancement
-    initial.gsub!(/[CK]/, 'K')
-    initial.gsub!(/[JY]/, 'Y')
-    initial.gsub!(/[VF]/, 'F')
-    initial.gsub!(/[LR]/, 'R')
-    initial.gsub!(/[MN]/, 'N')
-    initial.gsub!(/[SZ]/, 'Z')
-    # W followed by a vowel should be treated as a consonant enhancement
-    tail.gsub!(/W[AEIOUHY]/, '8')
-    # Change letters from the following sets into the digit given
-    tail.gsub!(/[AEIOUHWY]/, '0')
-    tail.gsub!(/[BFPV]/, '1')
-    tail.gsub!(/[CGKQX]/, '2')
-    tail.gsub!(/[DT]/, '3')
-    tail.gsub!(/[LR]/, '4')
-    tail.gsub!(/[MN]/, '5')
-    tail.gsub!(/[SZ]/, '6') # Originally with CGKQX
-    tail.gsub!(/[J]/, '7') # Originally with CGKQX
-    # Remove all pairs of digits which occur beside each other from the string
-    tail.gsub!(/1+/, '1')
-    tail.gsub!(/2+/, '2')
-    tail.gsub!(/3+/, '3')
-    tail.gsub!(/4+/, '4')
-    tail.gsub!(/5+/, '5')
-    tail.gsub!(/6+/, '6')
-    tail.gsub!(/7+/, '7')
-    tail.gsub!(/8+/, '8')
-    tail.gsub!(/9+/, '9')
-    # Remove all zeros from the string
-    tail.gsub!(/0/, '')
-    # Return only the first four positions
-    initial + tail.slice(0..2)
-  end
-*/
-    return null;
+    str = str.replaceAll("^M([BDFGJKLMNPQRSTVXZ])", "$1");
+    str = str.replaceAll("^N([BCDFGJKLMNPQRSTVXZ])", "$1");
+    str = str.replaceAll("^D([BCDFGJKLMNPQRSTVXZ])", "$1");
+
+
+    //THY and CH as common phonemes enhancement
+    str = str.replaceAll("(THY|CH|TCH)", "9");
+
+
+    // Retain the first letter of the word
+    String initial = String.valueOf(str.charAt(0));
+    String tail = str.substring(1, str.length());
+
+    // Initial vowel enhancement
+    initial = initial.replaceAll("[AEI]", "E");
+
+    initial = initial.replaceAll("[CK]", "K");
+    initial = initial.replaceAll("[JY]", "Y");
+    initial = initial.replaceAll("[VF]", "F");
+    initial = initial.replaceAll("[LR]", "R");
+    initial = initial.replaceAll("[MN]", "N");
+    initial = initial.replaceAll("[SZ]", "Z");
+
+    //W followed by a vowel should be treated as a consonant enhancement
+    tail = tail.replaceAll("W[AEIOUHY]", "8");
+
+    // Change letters from the following sets into the digit given
+    tail = tail.replaceAll("[AEIOUHWY]", "0");
+    tail = tail.replaceAll("[BFPV]", "1");
+    tail = tail.replaceAll("[CGKQX]", "2");
+    tail = tail.replaceAll("[DT]", "3");
+    tail = tail.replaceAll("[LR]", "4");
+    tail = tail.replaceAll("[MN]", "5");
+    tail = tail.replaceAll("[SZ]", "6"); // Originally with CGKQX
+    tail = tail.replaceAll("[J]", "7"); // Originally with CGKQX
+
+    // Remove all pairs of digits which occur beside each other from the string
+    tail = tail.replaceAll("1+", "1");
+    tail = tail.replaceAll("2+", "2");
+    tail = tail.replaceAll("3+", "3");
+    tail = tail.replaceAll("4+", "4");
+    tail = tail.replaceAll("5+", "5");
+    tail = tail.replaceAll("6+", "6");
+    tail = tail.replaceAll("7+", "7");
+    tail = tail.replaceAll("8+", "8");
+    tail = tail.replaceAll("9+", "9");
+
+    // Remove all zeros from the string
+    tail = tail.replaceAll("0", "");
+
+    // Return only the first four positions
+    if (tail.length() < 3)
+      return initial + tail;
+    else
+      return initial + tail.substring(0, 3);
+  }
+
+  public Object encode(Object o) throws EncoderException {
+    return encode((String)o);
   }
 }

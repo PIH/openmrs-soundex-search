@@ -71,10 +71,11 @@ public class ChichewaSoundexEncoder implements StringEncoder {
     }
 
     public String encode(String str){
+//        StringUtils su = new StringUtils();
 
         if (str == null || str.equals(""))
             return null;
-      //TODO: //accented e's and i's to their un-accented versions.
+//TODO: //accented e's and i's to their un-accented versions.
 
 
 //      # Handle blanks
@@ -112,7 +113,10 @@ public class ChichewaSoundexEncoder implements StringEncoder {
         str = str.substring(1,str.length());
 //      # Initial vowel enhancement
 //      initial.gsub!(/[AEI]/, 'E')
-        stSet = new HashSet<String>(Arrays.asList("A", "E", "I"));
+        stSet = new HashSet<String>();
+        stSet.add("A");
+        stSet.add("E");
+        stSet.add("I");
         str = replaceCharSequences("E", stSet, str);
 
 
