@@ -6,10 +6,10 @@
 <beans>
 	
     <bean id="soundexUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-    	<property name="order"><value>20</value></property>
+    	<property name="order"><value>2</value></property>
     	<property name="mappings">
             <props>
-	           <prop key="module/@MODULE_ID@/soundex.form">soundexFormController</prop>
+	           <prop key="module/soundex/soundex.form">soundexFormController</prop>
 	    	</props>
 		</property>
     </bean>
@@ -17,10 +17,10 @@
 	<!-- ========================= Controllers ========================= -->
 	
     <!-- Controllers -->
-    <bean id="soundexFormController" class="@MODULE_PACKAGE@.web.controller.SoundexFormController">
+    <bean id="soundexFormController" class="org.openmrs.module.soundex.web.controller.SoundexFormController">
 		<property name="commandName"><value>growthEncounter</value></property>
-		<property name="formView"><value>/module/@MODULE_ID@/soundexWelcome</value></property>
-		<property name="successView"><value>/module/@MODULE_ID@/soundexWelcome</value></property>
+		<property name="formView"><value>/module/soundex/soundexWelcome</value></property>
+		<property name="successView"><value>/module/soundex/soundexWelcome</value></property>
 		<property name="validator"><ref bean="soundexValidator" /></property>
     </bean>
     
