@@ -17,10 +17,10 @@
 	
 	<require_version>1.2.0.3400</require_version>
 
-    <!--<advice>-->
-	    <!--<point>org.openmrs.api.PatientService</point>-->
-	    <!--<class>org.openmrs.module.soundex.advisor.PatientServiceAroundAdvisor</class>-->
-    <!--</advice>-->
+    <advice>
+	    <point>org.openmrs.api.PatientService</point>
+	    <class>org.openmrs.module.soundex.advisor.PatientServiceAroundAdvisor</class>
+    </advice>
 
 	<!-- Extensions -->
 	<!-- 

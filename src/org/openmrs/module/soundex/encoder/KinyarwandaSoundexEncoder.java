@@ -5,11 +5,12 @@ package org.openmrs.module.soundex.encoder;
 /**
  *
  */
+
+import org.apache.commons.codec.StringEncoder;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.commons.codec.StringEncoder;
 
 public class KinyarwandaSoundexEncoder implements StringEncoder {
     public final static String validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

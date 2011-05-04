@@ -2,15 +2,12 @@
   */
 package org.openmrs.module.soundex.encoder;
 
-import org.apache.commons.codec.EncoderException;
-import org.apache.commons.codec.StringEncoder;
-
 /**
  *
  */
-public class SoundexEncoder implements StringEncoder {
+public class SoundexEncoder {
 
-  public String encode(String str) throws EncoderException {
+  public String encode(String str) {
 
     if (str == null || str.equals(""))
       return null;
@@ -80,9 +77,5 @@ public class SoundexEncoder implements StringEncoder {
       return initial + tail;
     else
       return initial + tail.substring(0, 3);
-  }
-
-  public Object encode(Object o) throws EncoderException {
-    return encode((String)o);
   }
 }

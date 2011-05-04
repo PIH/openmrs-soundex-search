@@ -6,12 +6,11 @@ package org.openmrs.module.soundex.encoder;
  *
  */
 
-import java.util.Arrays;
+import org.apache.commons.codec.StringEncoder;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.commons.codec.StringEncoder;
 
 public class ChichewaSoundexEncoder implements StringEncoder {
 

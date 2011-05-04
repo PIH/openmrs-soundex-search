@@ -1,0 +1,50 @@
+most popular family names:
+
+select family_name, COUNT(family_name) as num from person_name GROUP BY family_name ORDER BY num DESC LIMIT 20;
+
+Banda	485
+John	352
+James	317
+Joseph	239
+Peter	205
+Moses	175
+Charles	159
+George	159
+Petro	156
+Yohane	154
+Test	153
+Frank	150
+Manuel	144
+Donda	142
+Steven	135
+Elias	130
+Alfred	124
+Patrick	120
+Phiri	119
+Paul	116
+
+
+most popular given names:
+
+select given_name, COUNT(given_name) as num from person_name GROUP BY given_name ORDER BY num DESC LIMIT 20;
+
+Mary	533
+Magret	428
+Agness	360
+Grace	346
+Rose	328
+James	262
+John	257
+Patricia	249
+Catherine	242
+Mercy	239
+Maria	235
+Patrick	225
+Christina	224
+Eliza	220
+Malita	218
+Lucy	214
+Alice	213
+Ruth	212
+Charles	206
+Chrissy	206

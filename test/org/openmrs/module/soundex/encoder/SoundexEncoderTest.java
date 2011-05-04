@@ -18,7 +18,7 @@ public class SoundexEncoderTest {
   @Test
   public void testSamples() throws EncoderException {
 
-    StringEncoder encoder = new SoundexEncoder();
+    SoundexEncoder encoder = new SoundexEncoder();
 
     assertNotNull("be able to convert a word to code", encoder.encode("Rodney"));
     assertEquals("capatalize all of the letters", "X", encoder.encode("x"));
