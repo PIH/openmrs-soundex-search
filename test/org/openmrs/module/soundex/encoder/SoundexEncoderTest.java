@@ -1,5 +1,18 @@
-/*
-  */
+/**
+ * The contents of this file are subject to the OpenMRS Public License
+ * Version 1.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://license.openmrs.org
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
+ *
+ * @author Arnd Kleinbeck, innoQ Deutschland GmbH, http://www.innoq.com
+ */
 package org.openmrs.module.soundex.encoder;
 
 import org.apache.commons.codec.EncoderException;
@@ -11,7 +24,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- *
+ * Test class for transient (non-context-sensitive) tests of the SoundexEncoder.
+ * Adopted from a ruby implementation in the bart2 project. see
+ * https://github.com/BaobabHealthTrust/bart2/blob/bart2/test/unit/bantu_soundex_test.rb
  */
 public class SoundexEncoderTest {
 

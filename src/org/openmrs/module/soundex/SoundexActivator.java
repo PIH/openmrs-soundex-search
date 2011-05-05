@@ -10,7 +10,10 @@
  * under the License.
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
+ *
+ * @author Arnd Kleinbeck, innoQ Deutschland GmbH, http://www.innoq.com
  */
+
 package org.openmrs.module.soundex;
 
 import org.apache.commons.logging.Log;

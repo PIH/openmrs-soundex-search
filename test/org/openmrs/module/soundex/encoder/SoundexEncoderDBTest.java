@@ -1,5 +1,18 @@
-/*
-  */
+/**
+ * The contents of this file are subject to the OpenMRS Public License
+ * Version 1.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://license.openmrs.org
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
+ *
+ * @author Arnd Kleinbeck, innoQ Deutschland GmbH, http://www.innoq.com
+ */
 package org.openmrs.module.soundex.encoder;
 
 import junit.framework.Assert;
@@ -33,10 +46,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- *
+ * Test class for context-sensitive tests of the SoundexEncoder and the PatientServiceAroundAdvisor.
+ * It requires a loaded patient database.
  */
 public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
 
+  /**
+   * Class for holding the name information and id for a patient.
+   */
   private class NameRecord {
 
     int person_name_id;
@@ -78,6 +95,10 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
 
   }
 
+  /**
+   * Checks the prepared soundex codes in the person_name_code table of the openmrs database.
+   * @throws Exception in case of errors
+   */
   @Test
   public void testSoundexCodesFromDBTable() throws Exception {
 
@@ -106,21 +127,23 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
       nameRecord.middle_name = (String) record[2];
       nameRecord.family_name = (String) record[3];
 
-//      System.out.println("person_name_id: " + nameRecord.person_name_id);
-//      System.out.println("   given  name: " + nameRecord.given_name);
-//      System.out.println("   family name: " + nameRecord.family_name);
-
       NameRecord codeRecord = getCodesFromDB(nameRecord);
 
       assertNotNull(codeRecord);
       checkEncoder(new SoundexEncoder(), nameRecord, codeRecord);
       counter++;
-
     }
 
     System.out.println("verified " + counter + " patient codes");
   }
 
+  /**
+   * Builds the SQL query string for finding all records that
+   * have name components matching the given soundex code.
+   *
+   * @param code  the soundex code
+   * @return sql query string
+   */
   private static String buildSqlQueryString(String code) {
     return "SELECT p.patient_id " +
             "FROM patient p, person_name pn, person_name_code pnc " +
@@ -140,8 +163,8 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
   @Test
   public void testSoundexCodeLookup() throws Exception {
 
-    // authenticate wertet die runtime properties junit.username und junit.password aus falls vorhanden
-    // falls nicht, wird ein Dialog zum Eingeben der Credentials angezeigt
+    // authenticate evaluates the runtime properties junit.username and junit.password if available
+    // if not, a dialog for entering the user credentials pops up
     authenticate();
 
     SoundexEncoder encoder = new SoundexEncoder();
@@ -184,11 +207,15 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
     System.out.println("found " + counter + " matches!");
   }
 
+  /**
+   * Asserts that individual patients from the given patient database are found by the soundex search.
+   * @throws Exception in case of errors
+   */
   @Test
   public void testPatientServiceAroundAdvisor() throws Exception {
 
-    // authenticate wertet die runtime properties junit.username und junit.password aus falls vorhanden
-    // falls nicht, wird ein Dialog zum Eingeben der Credentials angezeigt
+    // authenticate evaluates the runtime properties junit.username and junit.password if available
+    // if not, a dialog for entering the user credentials pops up
     authenticate();
 
     executeSoundexSearch("Mishek", Arrays.asList(28103, 51031, 48368, 55111));
@@ -222,15 +249,15 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
   }
 
   private void checkEncoder(SoundexEncoder encoder, NameRecord nameRecord, NameRecord codeRecord) throws EncoderException {
-//    if (!nameRecord.given_name.toUpperCase().startsWith("Q")) {
     assertEquals("error for " + nameRecord.given_name, codeRecord.given_name, encoder.encode(nameRecord.given_name));
-//    } else {
-//      System.out.println("FAILED WITH " + nameRecord.given_name);
-//    }
     assertEquals("error for " + nameRecord.middle_name, codeRecord.middle_name, encoder.encode(nameRecord.middle_name));
     assertEquals("error for " + nameRecord.family_name, codeRecord.family_name, encoder.encode(nameRecord.family_name));
   }
 
+  /**
+   * Asserts some individual patients lookup.
+   * @throws Exception in case of errors
+   */
   @Test
   public void testIndividualPatients() throws Exception {
 
@@ -277,9 +304,15 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
   }
 
 
+  /**
+   * Asserts that soundex search results are a superset of the conventional results.
+   * @throws Exception in case of errors
+   */
   @Test
   public void testSoundexResultsIncludeConventional() throws Exception {
 
+    // authenticate evaluates the runtime properties junit.username and junit.password if available
+    // if not, a dialog for entering the user credentials pops up
     authenticate();
 
     ensureSoundexResultsIncludeConventional("Water");
@@ -312,9 +345,15 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
   }
 
 
+  /**
+   * Runs given name soundex searches.
+   * @throws Exception in case of errors
+   */
   @Test
   public void testGivenNameSoundexQuery() throws Exception {
 
+    // authenticate evaluates the runtime properties junit.username and junit.password if available
+    // if not, a dialog for entering the user credentials pops up
     authenticate();
 
     executeGivenNameSoundexQuery("Emily");
@@ -364,9 +403,15 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
     System.out.println("found " + counter + " results for name " + queryString);
   }
 
+  /**
+   * Runs family name soundex searches.
+   * @throws Exception in case of errors
+   */
   @Test
   public void testFamilyNameSoundexQuery() throws Exception {
 
+    // authenticate evaluates the runtime properties junit.username and junit.password if available
+    // if not, a dialog for entering the user credentials pops up
     authenticate();
 
     executeFamilyNameSoundexQuery("Water");
@@ -401,9 +446,15 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
     System.out.println("found " + counter + " results for name " + queryString);
   }
 
+  /**
+   * Runs combined given name and family name soundex searches.
+   * @throws Exception in case of errors
+   */
   @Test
   public void testGivenAndFamilyNameSoundexQuery() throws Exception {
 
+    // authenticate evaluates the runtime properties junit.username and junit.password if available
+    // if not, a dialog for entering the user credentials pops up
     authenticate();
 
     executeGivenAndFamilyNameSoundexQuery("Mary", "Banda");
@@ -449,9 +500,15 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
                        + "(" + patient.getPatientId() + ")");
   }
 
+  /**
+   * Checks the global properties of the administration service.
+   * @throws Exception in case of errors
+   */
   @Test
   public void testAdminService() throws Exception {
 
+    // authenticate evaluates the runtime properties junit.username and junit.password if available
+    // if not, a dialog for entering the user credentials pops up
     authenticate();
 
     final AdministrationService adminService = Context.getAdministrationService();
