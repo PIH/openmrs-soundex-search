@@ -12,8 +12,10 @@ import org.hibernate.cfg.Environment;
 import org.hibernate.classic.Session;
 import org.hibernate.dialect.MySQL5InnoDBDialect;
 import org.junit.Test;
+import org.openmrs.GlobalProperty;
 import org.openmrs.Patient;
 import org.openmrs.Person;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.soundex.advisor.PatientServiceAroundAdvisor;
 import org.openmrs.test.BaseContextSensitiveTest;
@@ -447,4 +449,16 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
                        + "(" + patient.getPatientId() + ")");
   }
 
+  @Test
+  public void testAdminService() throws Exception {
+
+    authenticate();
+
+    final AdministrationService adminService = Context.getAdministrationService();
+    final List<GlobalProperty> globalProperties = adminService.getAllGlobalProperties();
+
+    for (GlobalProperty prop: globalProperties) {
+      System.out.println("prop: " + prop.getProperty() + "\t" + prop.getPropertyValue());
+    }
+  }
 }

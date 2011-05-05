@@ -26,8 +26,14 @@ import java.util.List;
  */
 public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvisor implements Advisor {
 
-  private static final int DEFAUL_RESULT_LIMIT = 9999;
+  private static final String DEFAULT_SQL_LIMIT_TAG = "soundex.search.sql.limit";
+  private static final String DEFAULT_RESULT_LIMIT_TAG = "soundex.search.result.limit";
+
+  private static final int DEFAULT_SQL_LIMIT = 9999;
+  private static final int DEFAULT_RESULT_LIMIT = 200;
+  
   private Log log = LogFactory.getLog(this.getClass());
+
   private static SoundexEncoder soundexEncoder = new SoundexEncoder();
 
   public boolean matches(Method method, Class targetClass) {
@@ -47,7 +53,7 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
   }
 
   public String buildSoundexGivenNameQueryString(String name) {
-    return   buildSoundexGivenNameQueryString(name, DEFAUL_RESULT_LIMIT);
+    return   buildSoundexGivenNameQueryString(name, getDefaultSqlLimit());
   }
 
   public String buildSoundexGivenNameQueryString(String name, int limit) {
@@ -68,8 +74,16 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
               "LIMIT " + limit + ";";
   }
 
+  public static int getDefaultResultSetLimit() {
+    return new Integer(Context.getAdministrationService().getGlobalProperty(DEFAULT_RESULT_LIMIT_TAG, String.valueOf(DEFAULT_RESULT_LIMIT)));
+  }
+
+  public static int getDefaultSqlLimit() {
+    return new Integer(Context.getAdministrationService().getGlobalProperty(DEFAULT_SQL_LIMIT_TAG, String.valueOf(DEFAULT_SQL_LIMIT)));
+  }
+
   public String buildSoundexFamilyNameQueryString(String name) {
-    return buildSoundexFamilyNameQueryString(name, DEFAUL_RESULT_LIMIT);
+    return buildSoundexFamilyNameQueryString(name, getDefaultSqlLimit());
   }
 
   public String buildSoundexFamilyNameQueryString(String name, int limit) {
@@ -92,7 +106,7 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
   }
 
   public String buildSoundexGivenAndFamilyNameQueryString(String given_name, String family_name) {
-    return buildSoundexGivenAndFamilyNameQueryString(given_name, family_name, DEFAUL_RESULT_LIMIT);
+    return buildSoundexGivenAndFamilyNameQueryString(given_name, family_name, getDefaultSqlLimit());
   }
   public String buildSoundexGivenAndFamilyNameQueryString(String given_name, String family_name, int limit) {
 
@@ -180,6 +194,10 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
         int patientId= (Integer) iterator.next();
         final Patient patient = Context.getPatientService().getPatient(patientId);
         patients.add(patient);
+
+        if (patients.size() == getDefaultResultSetLimit()) {
+          break;
+        }
       }
 
       return patients;
@@ -207,12 +225,20 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
           }
         }
 
+        if (patients.size() == getDefaultResultSetLimit()) {
+          break;
+        }
+
         if (givenNameIterator.hasNext()) {
           int patientId = (Integer)givenNameIterator.next();
           final Patient patient = Context.getPatientService().getPatient(patientId);
           if (!patients.contains(patient)) {
             patients.add(patient);
           }
+        }
+
+        if (patients.size() == getDefaultResultSetLimit()) {
+          break;
         }
       }
 
