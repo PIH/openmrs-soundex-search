@@ -1,4 +1,6 @@
 /**
+ * Copyright (C) 2011 innoQ Deutschland GmbH
+ *
  * The contents of this file are subject to the OpenMRS Public License
  * Version 1.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -8,8 +10,6 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations
  * under the License.
- *
- * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  *
  * @author Arnd Kleinbeck, innoQ Deutschland GmbH, http://www.innoq.com
  */
@@ -232,6 +232,8 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
       final SQLQuery givenNameQuery = getCurrentSession().createSQLQuery(givenNameSql);
       final Iterator givenNameIterator = givenNameQuery.list().iterator();
 
+      Context.getPatientSetService().getPatients(familyNameQuery.list());
+      
       // mix up results in alternating order
       List<Patient> patients = new ArrayList<Patient>();
       for (int i = 0; i < Math.max(familyNameQuery.list().size(), givenNameQuery.list().size()); i++) {
