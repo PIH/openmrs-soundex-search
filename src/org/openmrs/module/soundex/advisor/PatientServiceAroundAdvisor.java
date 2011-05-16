@@ -280,7 +280,7 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
     public List<Patient> executeSoundexSearch(String query) {
 
         String queryString = query.trim();
-        queryString.replaceAll("  ", " ");
+        queryString = queryString.replaceAll("  ", " ");
         queryString = queryString.replace(", ", " ");
         String[] names = queryString.split(" ");
 
