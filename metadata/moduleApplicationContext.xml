@@ -2,9 +2,10 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <!-- Beans to add to the current Application context definition -->
-  
+
 <beans>
-	
+<!--
+
     <bean id="soundexUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     	<property name="order"><value>2</value></property>
     	<property name="mappings">
@@ -13,10 +14,11 @@
 	    	</props>
 		</property>
     </bean>
-    
+-->
 	<!-- ========================= Controllers ========================= -->
 	
     <!-- Controllers -->
+<!--
     <bean id="soundexFormController" class="org.openmrs.module.soundex.web.controller.SoundexFormController">
 		<property name="commandName"><value>growthEncounter</value></property>
 		<property name="formView"><value>/module/soundex/soundexWelcome</value></property>
@@ -26,4 +28,5 @@
     
    <bean id="soundexValidator" class="org.openmrs.module.soundex.validator.SoundexValidator" />
      
- </beans>
+-->
+</beans>

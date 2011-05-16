@@ -1,6 +1,6 @@
 most popular family names:
 
-select family_name, COUNT(family_name) as num from person_name GROUP BY family_name ORDER BY num DESC LIMIT 20;
+select familyName, COUNT(familyName) as num from person_name GROUP BY familyName ORDER BY num DESC LIMIT 20;
 
 Banda	485
 John	352
@@ -26,7 +26,7 @@ Paul	116
 
 most popular given names:
 
-select given_name, COUNT(given_name) as num from person_name GROUP BY given_name ORDER BY num DESC LIMIT 20;
+select givenName, COUNT(givenName) as num from person_name GROUP BY givenName ORDER BY num DESC LIMIT 20;
 
 Mary	533
 Magret	428

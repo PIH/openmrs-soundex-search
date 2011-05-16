@@ -8,7 +8,7 @@
 	<name>PIH Malawi Soundex Module</name>
 	<version>1.0</version>
 	<package>org.openmrs.module.soundex</package>
-	<author>innoQ</author>
+	<author>innoQ Deutschland GmbH</author>
 	<description>
 			Integration of PIH Malawi Soundex name search.
 	</description>
@@ -17,41 +17,21 @@
 	
 	<require_version>1.2.0.3400</require_version>
 
+    <!-- AOP -->
     <advice>
 	    <point>org.openmrs.api.PatientService</point>
 	    <class>org.openmrs.module.soundex.advisor.PatientServiceAroundAdvisor</class>
     </advice>
 
 	<!-- Extensions -->
-	<!-- 
+<!--
 	<extension>
-		<point>org.openmrs.admin.list</point>
-		<class>@MODULE_PACKAGE@.extension.html.AdminList</class>
+		<point>org.openmrs.findPatient</point>
+		<class>org.openmrs.module.soundex.extension.html.SoundexExt</class>
 	</extension>
-	 -->
-	<!--
-	<extension>
-	<point>org.openmrs.findPatientPortlet.linksAtBottom</point>
- 		<class>@MODULE_PACKAGE@.extension.html.CreateAndRegisterLinkExt</class>
- 	</extension>
- 	-->
- 	<!-- 
-	<extension>
-		<point>org.openmrs.patientDashboard.patientSummary</point>
-		<class>@MODULE_PACKAGE@.extension.html.GrowthChartExt</class>
-	</extension>
-	-->
- 	<!-- /Extensions -->
-	
-	
-	<!-- AOP
-	<advice>
-		<point>org.openmrs.api.FormService</point>
-		<class>@MODULE_PACKAGE@.advice.DuplicateFormAdvisor</class>
-	</advice>
-	 /AOP -->
-	
-	
+
+-->
+
 	<!-- Required Privileges 
 	<privilege>
 		<name>Form Entry</name>
@@ -59,8 +39,6 @@
 	</privilege>
 	 /Required Privileges -->
 
-
-	
 	<!--
 	<dwr>
 		<allow>

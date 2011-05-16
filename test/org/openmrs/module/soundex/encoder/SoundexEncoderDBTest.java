@@ -15,6 +15,7 @@
  */
 package org.openmrs.module.soundex.encoder;
 
+import com.sun.deploy.util.Property;
 import junit.framework.Assert;
 import org.apache.commons.codec.EncoderException;
 import org.hibernate.HibernateException;
@@ -24,24 +25,30 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Environment;
 import org.hibernate.classic.Session;
 import org.hibernate.dialect.MySQL5InnoDBDialect;
+import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.soundex.SoundexRuntimePropertyAccess;
 import org.openmrs.module.soundex.advisor.PatientServiceAroundAdvisor;
 import org.openmrs.test.BaseContextSensitiveTest;
 import org.openmrs.test.TestUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -50,6 +57,28 @@ import static org.junit.Assert.assertTrue;
  * It requires a loaded patient database.
  */
 public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
+
+  @Before
+  public void adjustLimits() {
+
+    setDefaultResultLimit(5000);
+    setDefaultSqlLimit(5000);
+  }
+
+  public static void setDefaultResultLimit(int defaultResultLimit) {
+    addRuntimeProperty(SoundexRuntimePropertyAccess.DEFAULT_RESULT_LIMIT_TAG, String.valueOf(defaultResultLimit));
+  }
+
+  public static void setDefaultSqlLimit(int defaultResultLimit) {
+    addRuntimeProperty(SoundexRuntimePropertyAccess.DEFAULT_SQL_LIMIT_TAG, String.valueOf(defaultResultLimit));
+  }
+
+  public static void addRuntimeProperty(String property_name, String property_value) {
+    Properties props = new Properties();
+    props.putAll(Context.getRuntimeProperties());
+    props.setProperty(property_name, property_value);
+    Context.setRuntimeProperties(props);
+  }
 
   /**
    * Class for holding the name information and id for a patient.
@@ -341,7 +370,6 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
       System.out.println("checking " + "patient " + patient.getGivenName() + (patient.getMiddleName() != null ? " " + patient.getMiddleName() : "") + " " + patient.getFamilyName());
       assertTrue("patient " + patient.getGivenName() + " " + patient.getFamilyName() + " not in soundex result: ", soundexResults.contains(patient));
     }
-
   }
 
 
@@ -366,41 +394,50 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
 
   }
 
+  @Test
+  public void testDoubleSoundexQuery() throws Exception {
+
+    // authenticate evaluates the runtime properties junit.username and junit.password if available
+    // if not, a dialog for entering the user credentials pops up
+    authenticate();
+
+    final long time = GregorianCalendar.getInstance().getTime().getTime();
+    executeGivenNameSoundexQuery("Mary");
+    executeFamilyNameSoundexQuery("Mary");
+
+    System.out.println("time (ms): " + (GregorianCalendar.getInstance().getTime().getTime() - time));
+
+  }
+
   private void executeGivenNameSoundexQuery(String queryString) {
 
-    System.out.println("searching for given name " + queryString);
+//    System.out.println("searching for given name " + queryString);
     PatientServiceAroundAdvisor advisor = new PatientServiceAroundAdvisor();
-    final String sql = advisor.buildSoundexGivenNameQueryString(queryString, 5000);
+    final String sql = advisor.buildSoundexGivenNameQueryString(queryString, 100);
 
-    System.out.println("sql: " + sql);
+//    System.out.println("sql: " + sql);
 
-    int person_id = 0;
-    int counter = 0;
+    final long start = System.currentTimeMillis();
 
-    try {
+    final SQLQuery query = getCurrentSession().createSQLQuery(sql);
 
-      final SQLQuery query = getCurrentSession().createSQLQuery(sql);
-
-      final Iterator iterator = query.list().iterator();
-
+    List<Patient> patients;
+    if (true) {
+      patients = new ArrayList<Patient>();
+      Iterator iterator = query.list().iterator();
       while (iterator.hasNext()) {
-        counter++;
-        person_id = (Integer) iterator.next();
-
-        final Patient patient;
-        patient = Context.getPatientService().getPatient(person_id);
-
-//        printPatient(patient, counter);
+        int id = (Integer)iterator.next();
+        final Patient patient = Context.getPatientService().getPatient(id);
+        patients.add(patient);
       }
-
-    } catch (PropertyAccessException e) {
-      System.out.println("XXXXXXXXXX ERROR for patient " + person_id);
-    } catch (HibernateException e) {
-      assertTrue(e.getMessage().startsWith("A collection with cascade"));
-      System.out.println("XXXXXXXXXX ERROR for patient " + person_id);
+    } else {
+      patients = Context.getPatientSetService().getPatients(query.list());
     }
 
-    System.out.println("found " + counter + " results for name " + queryString);
+    final long end = System.currentTimeMillis();
+
+    System.out.println("   found " + patients.size() + " results for name " + queryString + " in " + (end - start) + " ms");
+
   }
 
   /**
@@ -432,18 +469,9 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
     System.out.println("sql: " + sql);
 
     final SQLQuery query = getCurrentSession().createSQLQuery(sql);
-    final Iterator iterator = query.list().iterator();
+    final List<Patient> patients = Context.getPatientSetService().getPatients(query.list());
 
-    int counter = 0;
-    while (iterator.hasNext()) {
-      counter++;
-      int person_id = (Integer) iterator.next();
-
-      final Patient patient = Context.getPatientService().getPatient(person_id);
-
-      printPatient(patient, counter);
-    }
-    System.out.println("found " + counter + " results for name " + queryString);
+    System.out.println("found " + patients.size() + " results for name " + queryString);
   }
 
   /**
@@ -468,11 +496,14 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
   private void executeGivenAndFamilyNameSoundexQuery(String givenNameQueryString, String familyNameQueryString) {
     System.out.println("searching for name " + givenNameQueryString + " " + familyNameQueryString);
 
+    final long start = System.currentTimeMillis();
+
     PatientServiceAroundAdvisor advisor = new PatientServiceAroundAdvisor();
     final String sql = advisor.buildSoundexGivenAndFamilyNameQueryString(givenNameQueryString, familyNameQueryString, 5000);
 
-    System.out.println("sql: " + sql);
+//    System.out.println("sql: " + sql);
 
+    List<Patient> individuallyConvertedPatients = new ArrayList<Patient>();
     final SQLQuery query = getCurrentSession().createSQLQuery(sql);
     final Iterator iterator = query.list().iterator();
 
@@ -481,10 +512,39 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
       int person_id = (Integer) iterator.next();
 
       final Patient patient = Context.getPatientService().getPatient(person_id);
-
+      individuallyConvertedPatients.add(patient);
       counter++;
-      printPatient(patient, counter);
+//      printPatient(patient, counter);
     }
+
+    final long individual = System.currentTimeMillis();
+
+    List<Patient> batchConvertedPatients = Context.getPatientSetService().getPatients(query.list());
+
+    final long end = System.currentTimeMillis();
+
+    System.out.println("   indiviual retrieval " + "(" + counter + "): " + (individual - start) + " ms");
+    System.out.println("   batch     retrieval " + "(" + counter + "): " + (end - individual  ) + " ms");
+
+    assertEquals(batchConvertedPatients.size(), individuallyConvertedPatients.size());
+
+    for (int i = 0; i < batchConvertedPatients.size(); i++) {
+//      assertEquals(batchConvertedPatients.get(i), individuallyConvertedPatients.get(i));
+    }
+
+  }
+
+  //@Test
+  public void testSqlQueryWithDirectHibernateMapping() {
+
+    final String sql = "SELECT * FROM person WHERE person_id >= '16000' AND person_id < '16010';";
+
+//    final SQLQuery query = getCurrentSession().createSQLQuery(sql);
+    final SQLQuery query = getCurrentSession().createSQLQuery(sql).addEntity(Person.class);
+
+    List persons = query.list();
+
+    assertTrue(persons.size() > 0);
   }
 
   private void printPatient(Patient patient) {
@@ -512,10 +572,63 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
     authenticate();
 
     final AdministrationService adminService = Context.getAdministrationService();
+
+    final String property_name  = "dies.ist.ein.test.property";
+    final String property_value = "dies ist ein property value";
+    adminService.saveGlobalProperty(new GlobalProperty(property_name, property_value));
+
     final List<GlobalProperty> globalProperties = adminService.getAllGlobalProperties();
 
     for (GlobalProperty prop: globalProperties) {
       System.out.println("prop: " + prop.getProperty() + "\t" + prop.getPropertyValue());
     }
+
+    assertNotNull(adminService.getGlobalProperty(property_name));
+    assertEquals(adminService.getGlobalProperty(property_name), property_value);
+  }
+
+  @Test
+  public void testRuntimeProperties() {
+
+    final String property_name  = "dies.ist.ein.test.property";
+    final String property_value = "dies ist ein property value";
+
+    addRuntimeProperty(property_name, property_value);
+
+    assertNotNull(Context.getRuntimeProperties().getProperty(property_name));
+
+    Enumeration propertyNames = Context.getRuntimeProperties().propertyNames();
+    while (propertyNames.hasMoreElements()) {
+      String propertyName = (String) propertyNames.nextElement();
+      final String propertyValue = Context.getRuntimeProperties().getProperty(propertyName);
+
+      System.out.println(propertyName + ": " + propertyValue);
+    }
+
+  }
+
+  @Test
+  public void testSoundexActivatorCodes() {
+    PatientServiceAroundAdvisor advisor = new PatientServiceAroundAdvisor();
+    PatientServiceAroundAdvisor.SoundexSearchAdvice advice = (PatientServiceAroundAdvisor.SoundexSearchAdvice) advisor.getAdvice();
+
+    assertTrue(advice.isSoundexSearch("s: Mary Banda"));
+    assertTrue(advice.isSoundexSearch("s:"));
+    assertTrue(advice.isSoundexSearch("soundex:"));
+    assertTrue(advice.isSoundexSearch("SOUNDEX:"));
+    assertTrue(advice.isSoundexSearch("soundex: John"));
+    assertTrue(advice.isSoundexSearch("SOUNDEX: Alina"));
+
+    assertFalse(advice.isSoundexSearch("soundex Alina"));
+    assertFalse(advice.isSoundexSearch("s Alina"));
+    assertFalse(advice.isSoundexSearch(""));
+    assertFalse(advice.isSoundexSearch("Mary"));
+    assertFalse(advice.isSoundexSearch(":"));
+    assertFalse(advice.isSoundexSearch("sound: Alina"));
+
+    addRuntimeProperty(SoundexRuntimePropertyAccess.SOUNDEX_ACTIVATOR_CODE_ALIAS_TAG, "sound:");
+
+    assertTrue(advice.isSoundexSearch("sound: Alina"));
+
   }
 }

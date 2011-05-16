@@ -31,14 +31,14 @@ public class SoundexActivator implements Activator {
 	 * @see org.openmrs.module.Activator#startup()
 	 */
 	public void startup() {
-		log.info("Starting Soundex Module");
+		log.info("Starting Soundex Module...");
   }
 	
 	/**
 	 * @see org.openmrs.module.Activator#shutdown()
 	 */
 	public void shutdown() {
-		log.info("Shutting down Soundex Module");
+		log.info("Shutting down Soundex Module...");
 	}
 
 }
