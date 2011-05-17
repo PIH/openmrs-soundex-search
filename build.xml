@@ -63,12 +63,13 @@
 		</javac>
 		
 		<!--  Compile module web java files -->
+<!--
 		<javac destdir="build" classpathref="classpath" debug="true" debuglevel="lines,source,vars">
 			<compilerarg line="-g" />
 			<src path="web/src/" />
 			<include name="**/*.java" />
 		</javac>
-		
+-->
 	</target>
 	
 	<target name="package-module" depends="compile-module" description="Packages module into jar file">

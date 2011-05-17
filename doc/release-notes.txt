@@ -1,0 +1,38 @@
+PIH Malawi Soundex Module 1.0.2 Release Notes (2011/05/17)
+-----------------------------------------------------------
+
+This release of the soundex search module is compatible with OpenMRS version 1.5.2
+
+Soundex Search can be activated by prepending ':soundex' or ':s' to the patient search query string in the standard
+patient search UI. If no activator prefix is provided a conventional patient search query is run.
+
+An individual alias for the soundex activator prefix can be set as runtime property "soundex.search.activatorcode.alias".
+
+If a single query string is entered, the soundex implementation does not know if the user searches for matching given
+names or family names. Therefore two independent searches (on given name and on family name) are executed against the
+database and the results are mixed up in alterating order in groups of 5.
+
+If two or more query strings are entered, the soundex algorithm recognizes the first string as the given name search
+pattern and the second string as the family name search pattern. Only records with either matches are returned.
+
+Familiy name queries not only take into account a patient's family name, but also the family_name2.
+
+Soundex Search is implemented via SQL queries executed via the current Hibernate Session.
+It is therefore heavily dependent on some parts of the current database schema. Changes to the database schema
+require modifications to the soundex query code. Remember this when thinking about upgrading to a new OpenMRS version.
+
+Soundex codes in database table person_name_codes are used for the search.
+
+Due to performance reasons the query result set size for soundex searches is limited to a default of 100 records.
+
+Soundex Search result set limitation can be adjusted with help of two runtime properties:
+"soundex.search.sql.limit"    - for setting the limit for internal SQL queries (in some cases more than one SQL
+                                query is run for a single search
+"soundex.search.result.limit" - for setting the limit for the overall result set size
+
+Although the soundex search result is a superset of the conventional search there may be records missing compared to
+the conventional search result set due to limitations of the soundex result set size.
+
+The ordering of the results is mainly done as part of the SQL query. Records with direct matches rank higher than
+records with only phonetic similarity. Records with more matching characters rank higher than records with less
+matching characters. Furtheron alphabetical collation is used for ordering the results.
