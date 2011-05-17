@@ -172,33 +172,33 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
     String soundex_code_family_name = soundexEncoder.encode(family_name);
 
     return
-            "SELECT distinct patient.patient_id " +
-                    "FROM person_name_code " +
-                    "INNER JOIN person_name ON person_name_code.person_name_id = person_name.person_name_id " +
-                    "INNER JOIN patient ON patient.patient_id = person_name.person_id " +
+      "SELECT distinct patient.patient_id " +
+        "FROM person_name_code " +
+        "INNER JOIN person_name ON person_name_code.person_name_id = person_name.person_name_id " +
+        "INNER JOIN patient ON patient.patient_id = person_name.person_id " +
 
-                    "WHERE patient.voided = 0 AND person_name.voided = 0 " +
-                      "AND (given_name_code LIKE '" + soundex_code_given_name + "%' " +
-                            "AND (family_name_code LIKE '" + soundex_code_family_name + "%' " +
-                                  "OR family_name2_code LIKE '" + soundex_code_family_name + "%') " +
-                      ") " +
+        "WHERE patient.voided = 0 AND person_name.voided = 0 " +
+          "AND (given_name_code LIKE '" + soundex_code_given_name + "%' " +
+                "AND (family_name_code LIKE '" + soundex_code_family_name + "%' " +
+                      "OR family_name2_code LIKE '" + soundex_code_family_name + "%') " +
+          ") " +
 
-                    "ORDER BY " +
-                      "CASE WHEN (INSTR(family_name,'" + family_name + "') > 0 OR INSTR(family_name2,'" + family_name + "') > 0 ) AND INSTR(given_name,'" + given_name + "') > 0 THEN 1 ELSE 2 END ASC, " +
-                      "CASE WHEN (INSTR(family_name,'" + family_name + "') > 0 OR INSTR(family_name2,'" + family_name + "') > 0 ) AND INSTR(given_name,'" + given_name + "') = 0 THEN 1 ELSE 2 END ASC, " +
-                      "CASE WHEN (INSTR(family_name,'" + family_name + "') = 0 AND INSTR(family_name2,'" + family_name + "') = 0 ) AND INSTR(given_name,'" + given_name + "') > 0 THEN 1 ELSE 2 END ASC, " +
-                      "ABS(LENGTH(family_name) - LENGTH('" + soundex_code_family_name + "')) ASC, " +
-                      "ABS(LENGTH(given_name) - LENGTH('" + soundex_code_given_name + "')) ASC, " +
+        "ORDER BY " +
+          "CASE WHEN (INSTR(family_name,'" + family_name + "') > 0 OR INSTR(family_name2,'" + family_name + "') > 0 ) AND INSTR(given_name,'" + given_name + "') > 0 THEN 1 ELSE 2 END ASC, " +
+          "CASE WHEN (INSTR(family_name,'" + family_name + "') > 0 OR INSTR(family_name2,'" + family_name + "') > 0 ) AND INSTR(given_name,'" + given_name + "') = 0 THEN 1 ELSE 2 END ASC, " +
+          "CASE WHEN (INSTR(family_name,'" + family_name + "') = 0 AND INSTR(family_name2,'" + family_name + "') = 0 ) AND INSTR(given_name,'" + given_name + "') > 0 THEN 1 ELSE 2 END ASC, " +
+          "ABS(LENGTH(family_name) - LENGTH('" + soundex_code_family_name + "')) ASC, " +
+          "ABS(LENGTH(given_name) - LENGTH('" + soundex_code_given_name + "')) ASC, " +
 
-                      "CASE WHEN (INSTR(family_name_code,'" + soundex_code_family_name + "') > 0 OR INSTR(family_name2_code,'" + soundex_code_family_name + "') > 0 ) AND INSTR(given_name_code,'" + soundex_code_given_name + "') > 0 THEN 1 ELSE 2 END ASC, " +
-                      "CASE WHEN (INSTR(family_name_code,'" + soundex_code_family_name + "') > 0 OR INSTR(family_name2_code,'" + soundex_code_family_name + "') > 0 ) AND INSTR(given_name_code,'" + soundex_code_given_name + "') = 0 THEN 1 ELSE 2 END ASC, " +
-                      "CASE WHEN (INSTR(family_name_code,'" + soundex_code_family_name + "') = 0 AND INSTR(family_name2_code,'" + soundex_code_family_name + "') = 0 ) AND INSTR(given_name_code,'" + soundex_code_given_name + "') > 0 THEN 1 ELSE 2 END ASC, " +
+          "CASE WHEN (INSTR(family_name_code,'" + soundex_code_family_name + "') > 0 OR INSTR(family_name2_code,'" + soundex_code_family_name + "') > 0 ) AND INSTR(given_name_code,'" + soundex_code_given_name + "') > 0 THEN 1 ELSE 2 END ASC, " +
+          "CASE WHEN (INSTR(family_name_code,'" + soundex_code_family_name + "') > 0 OR INSTR(family_name2_code,'" + soundex_code_family_name + "') > 0 ) AND INSTR(given_name_code,'" + soundex_code_given_name + "') = 0 THEN 1 ELSE 2 END ASC, " +
+          "CASE WHEN (INSTR(family_name_code,'" + soundex_code_family_name + "') = 0 AND INSTR(family_name2_code,'" + soundex_code_family_name + "') = 0 ) AND INSTR(given_name_code,'" + soundex_code_given_name + "') > 0 THEN 1 ELSE 2 END ASC, " +
 
-                      "family_name ASC, " +
-                      "given_name ASC, " +
-                      "family_name2 ASC " +
+          "family_name ASC, " +
+          "given_name ASC, " +
+          "family_name2 ASC " +
 
-                    "LIMIT " + limit + ";";
+        "LIMIT " + limit + ";";
 
   }
 
@@ -425,5 +425,4 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
       return patients.subList(0, Math.min(patients.size(), SoundexRuntimePropertyAccess.getDefaultResultLimit()));
     }
   }
-
 }

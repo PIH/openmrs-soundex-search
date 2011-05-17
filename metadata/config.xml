@@ -6,9 +6,9 @@
 	<!-- Base Module Properties -->
 	<id>soundex</id>
 	<name>PIH Malawi Soundex Module</name>
-	<version>1.0</version>
+	<version>1.0.1</version>
 	<package>org.openmrs.module.soundex</package>
-	<author>innoQ Deutschland GmbH</author>
+	<author>Arnd Kleinbeck, innoQ Deutschland GmbH</author>
 	<description>
 			Integration of PIH Malawi Soundex name search.
 	</description>
