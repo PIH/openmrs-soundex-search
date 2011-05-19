@@ -63,13 +63,12 @@
 	<classpathentry kind="lib" path="lib-common/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib-common/hibernate3.jar"/>
 	<classpathentry kind="lib" path="lib-common/htmlwidgets-1.5.6.jar"/>
-	<classpathentry kind="lib" path="lib-common/junit-3.8.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/openmrs-api-1.5.2.11623-dev.jar"/>
 	<classpathentry kind="lib" path="lib-common/serialization.xstream-0.1.8.3.jar"/>
 	<classpathentry kind="lib" path="lib-common/servlet-api.jar"/>
-	<classpathentry kind="lib" path="lib-common/spring-2.5.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib-common/tests-openmrs-api-1.5.2.11623-dev.jar"/>
 	<classpathentry kind="lib" path="lib-common/web-openmrs-api-1.5.2.11623-dev.jar"/>
+	<classpathentry kind="lib" path="lib-common/commons-codec-1.4.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
