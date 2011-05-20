@@ -45,7 +45,7 @@ import java.util.List;
 public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvisor implements Advisor {
 
   /** default soundex search activator codes. */
-  private static final Collection<String> DEFAULT_SOUNDEX_ACTIVATION_CODES = Arrays.asList("soundex:", "s:");
+  private static final Collection<String> DEFAULT_SOUNDEX_ACTIVATION_CODES = Arrays.asList("soundex:", "s:", ":soundex", ":s");
 
   /** logger */
   private Log log = LogFactory.getLog(this.getClass());
@@ -255,6 +255,8 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
       for (String soundexActivator: soundexActivationCodes) {
         if (query.toUpperCase().startsWith(soundexActivator.toUpperCase())) {
           return query.substring(soundexActivator.length());
+        } else if (query.toUpperCase().endsWith(soundexActivator.toUpperCase())) {
+          return query.substring(0, query.length()-soundexActivator.length());
         }
       }
 
