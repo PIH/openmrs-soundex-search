@@ -3,6 +3,10 @@ PIH Malawi Soundex Module 1.0.3 Release Notes (2011/05/17)
 In addition to the previous activation codes soundex search can be activated by adding ':s' or ':soundex' at the
 end of the actual search string. This reduces the burden to easily switch between conventional and soundex search.
 
+Special treatment for name parts 'art' (e.g. Esnart) and 'arg' (e.g. Margret).
+
+Masking of ' with \' for SQL queries.
+
 PIH Malawi Soundex Module 1.0.2 Release Notes (2011/05/17)
 -----------------------------------------------------------
 
