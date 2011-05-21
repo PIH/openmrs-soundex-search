@@ -16,7 +16,6 @@
 package org.openmrs.module.soundex.encoder;
 
 import org.apache.commons.codec.EncoderException;
-import org.apache.commons.codec.StringEncoder;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertNull;

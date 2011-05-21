@@ -58,7 +58,6 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
    */
   @Before
   public void adjustLimits() {
-
     setDefaultResultLimit(100);
     setDefaultSqlLimit(100);
   }
@@ -134,8 +133,8 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
       runtimeProperties.setProperty("connection.username", "openmrs");
       runtimeProperties.setProperty("connection.password", "openmrs");
 
-      runtimeProperties.setProperty("junit.username", "cneumann");
-      runtimeProperties.setProperty("junit.password", "cneumann2");
+      runtimeProperties.setProperty("junit.username", "openmrs");
+      runtimeProperties.setProperty("junit.password", "openmrs");
 
     }
 

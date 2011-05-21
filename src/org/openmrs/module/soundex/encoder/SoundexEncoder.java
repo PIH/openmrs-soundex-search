@@ -40,6 +40,11 @@ public class SoundexEncoder {
     str = str.replaceAll("^D([BCDFGJKLMNPQRSTVXZ])", "$1");
 
 
+    // silent R enhancement (Margret, Esnart)
+    str = str.replaceAll("ARG", "AG");
+    str = str.replaceAll("ART", "AT");
+
+  
     //THY and CH as common phonemes enhancement
     str = str.replaceAll("(THY|CH|TCH)", "9");
 

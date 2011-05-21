@@ -101,6 +101,7 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
   public String buildSoundexGivenNameQueryString(String name, int limit) {
 
     String soundex_code = soundexEncoder.encode(name);
+    name = name.replaceAll("'", "\'"); // mask for SQL
 
     return "SELECT distinct patient.patient_id " +
                     "FROM person_name_code " +
@@ -134,6 +135,7 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
   public String buildSoundexFamilyNameQueryString(String name, int limit) {
 
     String soundex_code = soundexEncoder.encode(name);
+    name = name.replaceAll("'", "\'"); // mask for SQL
 
     return "SELECT distinct patient.patient_id " +
                     "FROM person_name_code " +
@@ -170,6 +172,8 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
 
     String soundex_code_given_name  = soundexEncoder.encode(given_name);
     String soundex_code_family_name = soundexEncoder.encode(family_name);
+    given_name = given_name.replaceAll("'", "\'"); // mask for SQL
+    family_name = family_name.replaceAll("'", "\'"); // mask for SQL
 
     return
       "SELECT distinct patient.patient_id " +
