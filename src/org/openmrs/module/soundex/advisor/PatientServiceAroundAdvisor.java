@@ -359,38 +359,6 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
     }
 
     /**
-     * This method executes two independent searches. The first for matches in the family name soundex codes,
-     * the second for matches in the given name soundex codes. The results are mixed up in alternating order.
-     * @param name the search string
-     * @return list of patient objects that match the criteria
-     */
-    private List<Patient> executeSingleStringQuery_old(String name) {
-
-      final String familyNameSql = buildSoundexFamilyNameQueryString(name);
-      final SQLQuery familyNameQuery = getCurrentSession().createSQLQuery(familyNameSql);
-      final List<Patient> familyNamePatients = Context.getPatientSetService().getPatients(familyNameQuery.list());
-
-      final String givenNameSql = buildSoundexGivenNameQueryString(name);
-      final SQLQuery givenNameQuery = getCurrentSession().createSQLQuery(givenNameSql);
-      final List<Patient> givenNamePatients = Context.getPatientSetService().getPatients(givenNameQuery.list());
-
-      // mix up results in alternating order
-      List<Patient> patients = new ArrayList<Patient>();
-      for (int i = 0; i < Math.max(familyNamePatients.size(), givenNamePatients.size()); i++) {
-
-        if (i < familyNamePatients.size() && !patients.contains(familyNamePatients.get(i))) {
-          patients.add(familyNamePatients.get(i));
-        }
-
-        if (i < givenNamePatients.size() && !patients.contains(givenNamePatients.get(i))) {
-          patients.add(givenNamePatients.get(i));
-        }
-      }
-
-      return patients;
-    }
-
-    /**
      * This method executes a combined query for given_name and family_name soundex codes.
      * @param given_name the given name
      * @param family_name the family name
@@ -413,22 +381,6 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
       }
 
       return patients;
-    }
-
-    /**
-     * This method executes a combined query for given_name and family_name soundex codes.
-     * @param given_name the given name
-     * @param family_name the family name
-     * @return List of patients that soundex-match the provided names.
-     */
-    private List<Patient> executeDoubleStringQuery_old(String given_name, String family_name) {
-
-      final String sql = buildSoundexGivenAndFamilyNameQueryString(given_name, family_name);
-      final SQLQuery query = getCurrentSession().createSQLQuery(sql);
-
-      List<Patient> patients = Context.getPatientSetService().getPatients(query.list());
-
-      return patients.subList(0, Math.min(patients.size(), SoundexRuntimePropertyAccess.getDefaultResultLimit()));
     }
   }
 }

@@ -31,7 +31,6 @@ public class SoundexEncoderTest {
 
   @Test
   public void testSamples() throws EncoderException {
-
     SoundexEncoder encoder = new SoundexEncoder();
 
     assertNotNull("be able to convert a word to code", encoder.encode("Rodney"));

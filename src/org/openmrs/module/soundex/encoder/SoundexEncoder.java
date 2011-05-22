@@ -39,15 +39,12 @@ public class SoundexEncoder {
     str = str.replaceAll("^N([BCDFGJKLMNPQRSTVXZ])", "$1");
     str = str.replaceAll("^D([BCDFGJKLMNPQRSTVXZ])", "$1");
 
-
     // silent R enhancement (Margret, Esnart)
     str = str.replaceAll("ARG", "AG");
     str = str.replaceAll("ART", "AT");
-
   
     //THY and CH as common phonemes enhancement
     str = str.replaceAll("(THY|CH|TCH)", "9");
-
 
     // Retain the first letter of the word
     String initial = String.valueOf(str.charAt(0));

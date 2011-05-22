@@ -133,8 +133,8 @@ public class SoundexEncoderDBTest extends BaseContextSensitiveTest {
       runtimeProperties.setProperty("connection.username", "openmrs");
       runtimeProperties.setProperty("connection.password", "openmrs");
 
-      runtimeProperties.setProperty("junit.username", "openmrs");
-      runtimeProperties.setProperty("junit.password", "openmrs");
+      runtimeProperties.setProperty("junit.username", "admin");
+      runtimeProperties.setProperty("junit.password", "test");
 
     }
 
