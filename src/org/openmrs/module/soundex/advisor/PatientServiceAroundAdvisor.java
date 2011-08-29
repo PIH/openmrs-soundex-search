@@ -44,7 +44,9 @@ import java.util.List;
  */
 public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvisor implements Advisor {
 
-  /** default soundex search activator codes. */
+    private static final long serialVersionUID = -1088281919324035946L;
+
+/** default soundex search activator codes. */
   private static final Collection<String> DEFAULT_SOUNDEX_ACTIVATION_CODES = Arrays.asList("soundex:", "s:", ":soundex", ":s");
 
   /** logger */
@@ -242,7 +244,7 @@ public class PatientServiceAroundAdvisor extends StaticMethodMatcherPointcutAdvi
 
       final long end = System.currentTimeMillis();
       String time = NumberFormat.getIntegerInstance().format((end-start));
-      log.info(searchType + " search found " + results.size() + " records for query '" + query + "' in " + time + " ms.");
+      log.debug(searchType + " search found " + results.size() + " records for query '" + query + "' in " + time + " ms.");
 
       return results;
     }
